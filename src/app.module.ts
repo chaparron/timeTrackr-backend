@@ -8,9 +8,10 @@ import { DeleteEventUseCase } from './application/use-cases/DeleteEvent';
 import { GetEventUseCase } from './application/use-cases/GetEvent';
 import { UpdateEventUseCase } from './application/use-cases/UpdateEvent';
 import { GetEventsUseCase } from './application/use-cases/GetEvents';
+import { AuthModule } from './auth.module';
 
 @Module({
-  imports: [],
+  imports: [AuthModule],
   controllers: [AppController, EventController],
   providers: [
     AppService,
@@ -18,7 +19,6 @@ import { GetEventsUseCase } from './application/use-cases/GetEvents';
       provide: 'IEventRepository',
       useClass: EventInMemoryRepository,
     },
-
     CreateEventUseCase,
     DeleteEventUseCase,
     GetEventUseCase,
