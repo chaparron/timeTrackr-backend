@@ -1,11 +1,11 @@
 import { Controller, Post, Body, Put, Param, Get, Delete } from '@nestjs/common';
-import { EventCreateDto } from 'src/application/dto/event-create.dto';
-import { EventUpdateDto } from 'src/application/dto/event-update.dto';
-import { CreateEventUseCase } from 'src/application/use-cases/CreateEvent';
-import { DeleteEventUseCase } from 'src/application/use-cases/DeleteEvent';
-import { GetEventUseCase } from 'src/application/use-cases/GetEvent';
-import { GetEventsUseCase } from 'src/application/use-cases/GetEvents';
-import { UpdateEventUseCase } from 'src/application/use-cases/UpdateEvent';
+import { EventCreateDto } from '@application/dto/event-create.dto';
+import { EventUpdateDto } from '@application/dto/event-update.dto';
+import { CreateEventUseCase } from '@application/use-cases/CreateEvent';
+import { DeleteEventUseCase } from '@application/use-cases/DeleteEvent';
+import { GetEventUseCase } from '@application/use-cases/GetEvent';
+import { GetEventsUseCase } from '@application/use-cases/GetEvents';
+import { UpdateEventUseCase } from '@application/use-cases/UpdateEvent';
 
 @Controller('events')
 export class EventController {

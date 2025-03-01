@@ -1,6 +1,6 @@
-import { EventCreateDto } from "src/application/dto/event-create.dto";
-import { EventUpdateDto } from "src/application/dto/event-update.dto";
-import { Event } from "src/domain/entities/event.entity";
+import { EventCreateDto } from "@application/dto/event-create.dto";
+import { EventUpdateDto } from "@application/dto/event-update.dto";
+import { Event } from "@domain/entities/event.entity";
 
 export interface IEventRepository {
   create(eventCreateDto: EventCreateDto): Promise<Event>;

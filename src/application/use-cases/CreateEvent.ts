@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Event } from "src/domain/entities/event.entity";
-import { IEventRepository } from "src/domain/interfaces/IEventRepository";
+import { Event } from "@domain/entities/event.entity";
+import { IEventRepository } from "@domain/interfaces/IEventRepository";
 
 @Injectable()
 export class CreateEventUseCase {

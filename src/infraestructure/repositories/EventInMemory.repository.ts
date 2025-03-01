@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { EventCreateDto } from "src/application/dto/event-create.dto";
-import { EventUpdateDto } from "src/application/dto/event-update.dto";
-import { Event } from "src/domain/entities/event.entity";
-import { IEventRepository } from "src/domain/interfaces/IEventRepository";
+import { EventCreateDto } from "@application/dto/event-create.dto";
+import { EventUpdateDto } from "@application/dto/event-update.dto";
+import { Event } from "@domain/entities/event.entity";
+import { IEventRepository } from "@domain/interfaces/IEventRepository";
 
 @Injectable()
 export class EventInMemoryRepository implements IEventRepository {
