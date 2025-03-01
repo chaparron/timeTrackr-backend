@@ -8,7 +8,10 @@ export class DeleteEventUseCase {
     private readonly eventRepository: IEventRepository,
   ) {}
 
-  async execute(id: string) {
-    return this.eventRepository.delete(id);
+  async execute(id: string, userId: string): Promise<void> {
+    if (id !== userId) {
+      throw new Error('Unauthorized');
+    }
+    return await this.eventRepository.delete(id);
   }
 }

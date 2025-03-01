@@ -8,7 +8,10 @@ export class GetEventUseCase {
     private readonly eventRepository: IEventRepository,
   ) {}
 
-  async execute(id: string) {
+  async execute(id: string, userId: string) {
+    if (id !== userId) {
+      throw new Error('Unauthorized');
+    }
     return this.eventRepository.findById(id);
   }
 }

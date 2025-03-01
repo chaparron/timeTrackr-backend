@@ -7,8 +7,8 @@ import { CreateEventUseCase } from './application/use-cases/CreateEvent';
 import { DeleteEventUseCase } from './application/use-cases/DeleteEvent';
 import { GetEventUseCase } from './application/use-cases/GetEvent';
 import { UpdateEventUseCase } from './application/use-cases/UpdateEvent';
-import { GetEventsUseCase } from './application/use-cases/GetEvents';
 import { AuthModule } from './auth.module';
+import { getEventsByUserUseCase } from '@application/use-cases/getEventsByUser';
 
 @Module({
   imports: [AuthModule],
@@ -22,7 +22,7 @@ import { AuthModule } from './auth.module';
     CreateEventUseCase,
     DeleteEventUseCase,
     GetEventUseCase,
-    GetEventsUseCase,
+    getEventsByUserUseCase,
     UpdateEventUseCase
   ],
 })

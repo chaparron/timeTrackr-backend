@@ -1,6 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { EventCreateDto } from "@application/dto/event-create.dto";
-import { EventUpdateDto } from "@application/dto/event-update.dto";
 import { Event } from "@domain/entities/event.entity";
 import { IEventRepository } from "@domain/interfaces/IEventRepository";
 
@@ -8,8 +6,7 @@ import { IEventRepository } from "@domain/interfaces/IEventRepository";
 export class EventInMemoryRepository implements IEventRepository {
   private events: Event[] = [];
 
-  async create(eventCreateDto: EventCreateDto): Promise<Event> {
-    const event = new Event({...eventCreateDto});
+  async create(event: Event): Promise<Event> {
     this.events.push(event);
     return event;
   }
@@ -18,11 +15,11 @@ export class EventInMemoryRepository implements IEventRepository {
     return this.events.find((event) => event.id === id) || null;
   }
 
-  async findAll(): Promise<Event[]> {
-    return this.events;
+  async findAllByUserId(userId: string): Promise<Event[]> {
+    return this.events.filter(event => event.userId === userId);
   }
 
-  async update(id: string, eventUpdateDto: EventUpdateDto): Promise<Event | null> {
+  async update(id: string, eventUpdateDto: Event): Promise<Event | null> {
     const index = this.events.findIndex((e) => e.id === id);
     if (index === -1) return null;
   
