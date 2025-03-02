@@ -17,14 +17,13 @@ export class EventTypeOrmRepository implements IEventRepository {
 
   async findById(id: number): Promise<Event | null> {
     const foundEvent = await this.eventRepository.findOne({ 
-      where: { id: id } 
+      where: { id } 
     });
-    console.log({foundEvent})
     return foundEvent
   }
 
   async findAllByUserId(userId: number): Promise<Event[]> {
-    return await this.eventRepository.find({ where: {  id: userId } });
+    return await this.eventRepository.find({ where: {  userId } });
   }
 
   async update(id: number, event: Event): Promise<Event | null> {

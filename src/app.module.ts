@@ -13,6 +13,7 @@ import { Event } from '@domain/entities/event.entity';
 import { EventController } from '@infrastructure/controllers/EventController';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from 'redis.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { ConfigModule } from '@nestjs/config';
       synchronize: process.env.NODE_ENV === 'development',
     }),
     AuthModule,
-    InfrastructureModule
+    InfrastructureModule,
+    RedisModule,
   ],
   controllers: [AppController, EventController],
   providers: [
