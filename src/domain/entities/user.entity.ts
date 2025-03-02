@@ -14,9 +14,15 @@ export class User {
   @Column()
   passwordHash: string;
 
-  constructor(user?: Partial<User>) {
-    if (user) {
-      Object.assign(this, user);
+  constructor(userData?: { email: string; username: string; passwordHash: string }) {
+    if (userData) {
+      if (!userData.email || !userData.username || !userData.passwordHash) {
+        throw new Error('Email, username, and passwordHash are required to create a User.');
+      }
+
+      this.email = userData.email;
+      this.username = userData.username;
+      this.passwordHash = userData.passwordHash;
     }
   }
 }
