@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Put, Param, Get, Delete, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Put, Param, Get, Delete, UseGuards } from '@nestjs/common';
 import { EventCreateDto } from '@application/dto/event-create.dto';
 import { EventUpdateDto } from '@application/dto/event-update.dto';
 import { CreateEventUseCase } from '@application/use-cases/CreateEvent';
@@ -8,9 +8,12 @@ import { UpdateEventUseCase } from '@application/use-cases/UpdateEvent';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from '@infrastructure/decorators/current-user.decorator';
 import { getEventsByUserUseCase } from '@application/use-cases/getEventsByUser';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('events')
 @Controller('events')
-@UseGuards(AuthGuard('jwt'))	
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 export class EventController {
   constructor(
     private readonly createEventUseCase: CreateEventUseCase,
@@ -21,47 +24,63 @@ export class EventController {
   ) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a new event' })
+  @ApiBody({ type: EventCreateDto })
+  @ApiResponse({ status: 201, description: 'Event created successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid data' })
   async create(
     @Body() eventCreateDto: EventCreateDto,
-    @CurrentUser() user: {userId: number}
+    @CurrentUser() user: { userId: number },
   ) {
-    return this.createEventUseCase.execute(
-      eventCreateDto,
-      user.userId
-    )
+    return this.createEventUseCase.execute(eventCreateDto, user.userId);
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update an existing event' })
+  @ApiParam({ name: 'id', description: 'Event ID', example: 1 })
+  @ApiBody({ type: EventUpdateDto })
+  @ApiResponse({ status: 200, description: 'Event updated successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid data' })
+  @ApiResponse({ status: 404, description: 'Event not found' })
   async update(
     @Param('id') id: string,
     @Body() eventUpdateDto: EventUpdateDto,
-    @CurrentUser() user: {userId: number}
+    @CurrentUser() user: { userId: number },
   ) {
-    const eventId = parseInt(id, 10)
-    console.log({eventId, eventUpdateDto, user})
+    const eventId = parseInt(id, 10);
     return this.updateEventUseCase.execute(eventId, eventUpdateDto, user.userId);
   }
 
   @Get()
-  async getAllByUser(@CurrentUser() user: {userId: number}) {
+  @ApiOperation({ summary: 'Get all events for the current user' })
+  @ApiResponse({ status: 200, description: 'List of events' })
+  async getAllByUser(@CurrentUser() user: { userId: number }) {
     return this.getEventsByUserUseCase.execute(user.userId);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get an event by ID' })
+  @ApiParam({ name: 'id', description: 'Event ID', example: 1 })
+  @ApiResponse({ status: 200, description: 'Event found' })
+  @ApiResponse({ status: 404, description: 'Event not found' })
   async get(
     @Param('id') id: string,
-    @CurrentUser() user: {userId: number}
+    @CurrentUser() user: { userId: number },
   ) {
-    const eventId = parseInt(id, 10)
+    const eventId = parseInt(id, 10);
     return this.getEventUseCase.execute(eventId, user.userId);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete an event by ID' })
+  @ApiParam({ name: 'id', description: 'Event ID', example: 1 })
+  @ApiResponse({ status: 200, description: 'Event deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Event not found' })
   async delete(
     @Param('id') id: string,
-    @CurrentUser() user: {userId: number}
+    @CurrentUser() user: { userId: number },
   ) {
-    const eventId = parseInt(id, 10)
+    const eventId = parseInt(id, 10);
     return this.deleteEventUseCase.execute(eventId, user.userId);
   }
 }
