@@ -4,6 +4,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventTypeOrmRepository } from '@infrastructure/repositories/EnventTypeOrm.repository';
 import { UserTypeOrmRepository } from '@infrastructure/repositories/UserTypeOrm.repository';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from '@infrastructure/interceptors/logging.interceptor';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Event, User])],
@@ -16,6 +18,10 @@ import { UserTypeOrmRepository } from '@infrastructure/repositories/UserTypeOrm.
       provide: 'IUserRepository',
       useClass: UserTypeOrmRepository,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    }
   ],
   exports: ['IEventRepository', 'IUserRepository'],
 })

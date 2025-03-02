@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Put, Param, Get, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Put, Param, Get, Delete, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { EventCreateDto } from '@application/dto/event-create.dto';
 import { EventUpdateDto } from '@application/dto/event-update.dto';
 import { CreateEventUseCase } from '@application/use-cases/CreateEvent';
@@ -74,7 +74,8 @@ export class EventController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an event by ID' })
   @ApiParam({ name: 'id', description: 'Event ID', example: 1 })
-  @ApiResponse({ status: 200, description: 'Event deleted successfully' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: 204, description: 'Event deleted successfully' })
   @ApiResponse({ status: 404, description: 'Event not found' })
   async delete(
     @Param('id') id: string,
