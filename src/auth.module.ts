@@ -3,9 +3,9 @@ import { LoginUseCase } from '@application/use-cases/Login';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { AuthController } from 'infraestructure/controllers/AuthController';
-import { UserInMemoryRepository } from 'infraestructure/repositories/UserInMemory.repository';
-import { JwtStrategy } from 'infraestructure/strategies/jwt.strategy';
+import { AuthController } from '@infrastructure/controllers/AuthController';
+import { JwtStrategy } from '@infrastructure/strategies/jwt.strategy';
+import { InfrastructureModule } from 'infrastructure.module';
 
 @Module({
   imports: [
@@ -14,16 +14,13 @@ import { JwtStrategy } from 'infraestructure/strategies/jwt.strategy';
       secret: 'MySecretKey',
       signOptions: { expiresIn: '1h' },
     }),
+    InfrastructureModule
   ],
   controllers: [AuthController],
   providers: [
     LoginUseCase,
     CreateUserUseCase,
     JwtStrategy,
-    {
-      provide: 'IUserRepository',
-      useClass: UserInMemoryRepository,
-    },
   ],
   exports: [JwtStrategy, PassportModule],
 })

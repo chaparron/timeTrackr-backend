@@ -11,27 +11,20 @@ export class CreateUserUseCase {
         private readonly userRepository: IUserRepository
     ) { }
 
-async execute(createUserDto: CreateUserDto): Promise<{ id: string; email: string; username: string }> {
-    const existingUser = await this.userRepository.findByEmail(createUserDto.email);
+    async execute(createUserDto: CreateUserDto): Promise<User> {
+        const existingUser = await this.userRepository.findByEmail(createUserDto.email);
+        if (existingUser) {
+            throw new ConflictException('Email already registered.');
+        }
 
-    if (existingUser) {
-        throw new ConflictException('Email already registered.');
+        const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+        const user = new User({
+            email: createUserDto.email,
+            username: createUserDto.username,
+            passwordHash: hashedPassword,
+        });
+
+        return this.userRepository.create(user);
     }
-
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-
-    const user = new User({
-        email: createUserDto.email,
-        username: createUserDto.username,
-        passwordHash: hashedPassword,
-    });
-
-    await this.userRepository.create(user);
-    
-    return {
-        id: user.id,
-        email: user.email,
-        username: user.username
-    };
-}
 }

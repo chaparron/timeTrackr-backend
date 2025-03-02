@@ -25,7 +25,6 @@ export class AuthController {
   async register(@Body() createUserDto: CreateUserDto) {
     const user = await this.createUserUseCase.execute(createUserDto);
     return {
-      id: user.id,
       email: user.email,
       username: user.username,
     };

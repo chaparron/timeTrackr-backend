@@ -11,33 +11,26 @@ export class EventInMemoryRepository implements IEventRepository {
     return event;
   }
 
-  async findById(id: string): Promise<Event | null> {
+  async findById(id: number): Promise<Event | null> {
     return this.events.find((event) => event.id === id) || null;
   }
 
-  async findAllByUserId(userId: string): Promise<Event[]> {
+  async findAllByUserId(userId: number): Promise<Event[]> {
     return this.events.filter(event => event.userId === userId);
   }
 
-  async update(id: string, eventUpdateDto: Event): Promise<Event | null> {
-    const index = this.events.findIndex((e) => e.id === id);
+  async update(id: number, updatedEvent: Event): Promise<Event | null> {
+    const index = this.events.findIndex(e => e.id === id);
     if (index === -1) return null;
-  
+
     const existingEvent = this.events[index];
-  
-    existingEvent.update({
-      title: eventUpdateDto.title,
-      type: eventUpdateDto.type,
-      colleagues: eventUpdateDto.colleagues,
-      dates: eventUpdateDto.dates,
-      description: eventUpdateDto.description
-    });
-  
+
+    existingEvent.update(updatedEvent);
+
     return existingEvent;
   }
-  
 
-  async delete(id: string): Promise<void> {
+  async delete(id: number): Promise<void> {
     this.events = this.events.filter((event) => event.id !== id);
   }
 }

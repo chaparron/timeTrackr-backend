@@ -11,18 +11,16 @@ export class UserInMemoryRepository implements IUserRepository {
         return this.users.find(u => u.email === email) || null;
     }
 
-    async create(user: User): Promise<void> {
-        const existingUser = await this.findByEmail(user.email);
-        if (existingUser) throw new Error('User already exist.');
-
+    async create(user: User): Promise<User> {
+        user.id = this.users.length + 1;
         this.users.push(user);
+        return user
     }
 
     async validateCredentials(email: string, password: string): Promise<boolean> {
         const user = await this.findByEmail(email);
         if (!user) return false;
 
-        const userWithHash = user as any;
-        return bcrypt.compare(password, userWithHash.props.passwordHash);
+        return bcrypt.compare(password, user.passwordHash);
     }
 }

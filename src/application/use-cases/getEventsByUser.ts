@@ -8,7 +8,7 @@ export class getEventsByUserUseCase {
     private readonly eventRepository: IEventRepository,
   ) {}
 
-  async execute(userId: string) {
+  async execute(userId: number) {
     return this.eventRepository.findAllByUserId(userId);
   }
 }

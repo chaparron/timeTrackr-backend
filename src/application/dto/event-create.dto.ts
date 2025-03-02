@@ -1,27 +1,34 @@
-import { IsString, IsNotEmpty, IsArray, ValidateNested, IsOptional } from 'class-validator';
+import { IsString, IsArray, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
-import { EventDateDto } from './event-date.dto';
+
+class EventDateDto {
+  @IsString()
+  start: string;
+
+  @IsOptional()
+  @IsString()
+  end?: string;
+}
 
 export class EventCreateDto {
   @IsString()
-  @IsNotEmpty()
   title: string;
 
   @IsString()
-  @IsNotEmpty()
   type: string;
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @IsNotEmpty({ each: true })
-  colleagues: string[];
+  colleagues?: string[];
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => EventDateDto)
-  dates: EventDateDto[];
-
-  @IsString()
   @IsOptional()
+  @Type(() => EventDateDto)
+  dates?: EventDateDto[];
+
+  @IsOptional()
+  @IsString()
   description?: string;
 }
