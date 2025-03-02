@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Event {
@@ -7,6 +7,9 @@ export class Event {
 
   @Column()
   title: string;
+
+  @Column()
+  userId: number;
 
   @Column()
   type: string;
@@ -23,11 +26,11 @@ export class Event {
   @Column()
   totalHours: number;
 
-  @Column()
-  userId: number;
-
   constructor(props?: Partial<Omit<Event, 'totalHours'>>) {
     if (props) {
+      if (!props.userId || !props.title) {
+        throw new Error('userId and title are required to create an Event.');
+      }
       Object.assign(this, props);
       this.updateTotalHours();
     }
@@ -39,13 +42,13 @@ export class Event {
     for (const date of this.dates) {
       const start = new Date(date.start).getTime();
       if (isNaN(start)) {
-        throw new Error(`Invalid start date format, ${date.start}, shoud be YYYY-MM-DDThh:mm:ss`);
+        throw new Error(`Invalid start date format, ${date.start}, should be YYYY-MM-DDThh:mm:ss`);
       }
 
       if (date.end) {
         const end = new Date(date.end).getTime();
         if (isNaN(end)) {
-          throw new Error(`Invalid end date format, ${date.end}, shoud be YYYY-MM-DDThh:mm:ss`);
+          throw new Error(`Invalid end date format, ${date.end}, should be YYYY-MM-DDThh:mm:ss`);
         }
 
         if (start > end) {
@@ -56,8 +59,11 @@ export class Event {
   }
 
   updateTotalHours(): number {
-    this.validateDates()
-    if (!this.dates || this.dates.length === 0) return 0;
+    this.validateDates();
+    if (!this.dates || this.dates.length === 0) {
+      this.totalHours = 0;
+      return 0;
+    }
 
     let total = 0;
     for (const date of this.dates) {
@@ -72,7 +78,7 @@ export class Event {
 
   update(eventUpdateData: Partial<Event>): Event {
     const filteredUpdate = Object.fromEntries(
-      Object.entries(eventUpdateData).filter(([_, value]) => value !== undefined)
+      Object.entries(eventUpdateData).filter(([_, value]) => value !== undefined),
     );
 
     Object.assign(this, filteredUpdate);
