@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { CreateUserDto } from '@application/dto/createuser-dto';
 import { LoginDto } from '@application/dto/login.dto';
 import { CreateUserUseCase } from '@application/use-cases/CreateUser';
@@ -11,7 +11,7 @@ export class AuthController {
   constructor(
     private readonly loginUseCase: LoginUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
-  ) {}
+  ) { }
 
   @Post('login')
   @ApiOperation({ summary: 'User login' })
@@ -19,11 +19,14 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   async login(@Body() loginDto: LoginDto) {
+    const { token, user } = await this.loginUseCase.execute(
+      loginDto.email,
+      loginDto.password
+    );
+
     return {
-      access_token: await this.loginUseCase.execute(
-        loginDto.email,
-        loginDto.password,
-      ),
+      access_token: token,
+      user
     };
   }
 
@@ -34,9 +37,13 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Invalid data' })
   async register(@Body() createUserDto: CreateUserDto) {
     const user = await this.createUserUseCase.execute(createUserDto);
+    const token = await this.loginUseCase.execute(user.email, createUserDto.password);
     return {
-      email: user.email,
-      username: user.username,
+      access_token: token,
+      user: {
+        email: user.email,
+        username: user.username
+      }
     };
   }
 }

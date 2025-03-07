@@ -22,6 +22,14 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
   }));
   app.useGlobalFilters(new ValidationFilter())
-  await app.listen(process.env.PORT ?? 3000);
+
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
+  app.enableShutdownHooks();
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 bootstrap();
