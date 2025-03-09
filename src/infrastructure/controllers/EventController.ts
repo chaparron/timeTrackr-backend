@@ -1,13 +1,13 @@
 import { Controller, Post, Body, Put, Param, Get, Delete, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
-import { EventCreateDto } from '@application/dto/event-create.dto';
-import { EventUpdateDto } from '@application/dto/event-update.dto';
-import { CreateEventUseCase } from '@application/use-cases/CreateEvent';
-import { DeleteEventUseCase } from '@application/use-cases/DeleteEvent';
-import { GetEventUseCase } from '@application/use-cases/GetEvent';
-import { UpdateEventUseCase } from '@application/use-cases/UpdateEvent';
+import { EventCreateDto } from '@application/dto/events/event-create.dto';
+import { EventUpdateDto } from '@application/dto/events/event-update.dto';
+import { CreateEventUseCase } from '@application/use-cases/events/CreateEvent';
+import { DeleteEventUseCase } from '@application/use-cases/events/DeleteEvent';
+import { GetEventUseCase } from '@application/use-cases/events/GetEvent';
+import { UpdateEventUseCase } from '@application/use-cases/events/UpdateEvent';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from '@infrastructure/decorators/current-user.decorator';
-import { getEventsByUserUseCase } from '@application/use-cases/getEventsByUser';
+import { getEventsByUserUseCase } from '@application/use-cases/events/getEventsByUser';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('events')

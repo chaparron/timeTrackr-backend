@@ -5,6 +5,10 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserInMemoryRepository implements IUserRepository {
+
+    async findById(id: number): Promise<User | null> {
+        return await this.users.find(u => u.id === id) || null;
+    }
     private users: User[] = [];
 
     async findByEmail(email: string): Promise<User | null> {

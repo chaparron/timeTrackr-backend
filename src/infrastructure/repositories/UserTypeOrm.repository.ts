@@ -12,19 +12,25 @@ export class UserTypeOrmRepository implements IUserRepository {
     private readonly userRepository: Repository<User>,
   ) { }
 
+  async findById(id: number): Promise<User | null> {
+    const user = await this.userRepository.findOne({ where: { id: id } });
+    console.log({user})
+    return user
+  }
+
   async findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { email } }); 
+    return await this.userRepository.findOne({ where: { email } }); 
   }
 
   async create(user: User): Promise<User> {
-    const newUser = this.userRepository.create(user);
-    return this.userRepository.save(newUser);
+    const newUser = await this.userRepository.create(user);
+    return await this.userRepository.save(newUser);
   }
 
   async validateCredentials(email: string, password: string): Promise<boolean> {
     const user = await this.findByEmail(email);
     if (!user) return false;
 
-    return bcrypt.compare(password, user.passwordHash);
+    return await bcrypt.compare(password, user.passwordHash);
   }
 }

@@ -1,4 +1,4 @@
-import { EventUpdateDto } from "@application/dto/event-update.dto";
+import { EventUpdateDto } from "@application/dto/events/event-update.dto";
 import { Event } from "@domain/entities/event.entity";
 
 export interface IEventRepository {

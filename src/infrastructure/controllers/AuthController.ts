@@ -1,9 +1,12 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
-import { CreateUserDto } from '@application/dto/createuser-dto';
-import { LoginDto } from '@application/dto/login.dto';
-import { CreateUserUseCase } from '@application/use-cases/CreateUser';
-import { LoginUseCase } from '@application/use-cases/Login';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { CreateUserDto } from '@application/dto/users/user-create.dto';
+import { LoginDto } from '@application/dto/users/user-login.dto';
+import { CreateUserUseCase } from '@application/use-cases/auth/CreateUser';
+import { LoginUseCase } from '@application/use-cases/auth/Login';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { CurrentUser } from '@infrastructure/decorators/current-user.decorator';
+import { GetUserDetailsUseCase } from '@application/use-cases/auth/GetUserDetails';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -11,7 +14,20 @@ export class AuthController {
   constructor(
     private readonly loginUseCase: LoginUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
+    private readonly getUserDetailsUseCase: GetUserDetailsUseCase,
   ) { }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'User details' })
+  @ApiResponse({ status: 200, description: 'User details obtained' })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  async getUserDetails(
+    @CurrentUser() user: { userId: number },
+  ) {
+    return await this.getUserDetailsUseCase.execute(user.userId);
+  }
 
   @Post('login')
   @ApiOperation({ summary: 'User login' })
@@ -37,7 +53,7 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Invalid data' })
   async register(@Body() createUserDto: CreateUserDto) {
     const user = await this.createUserUseCase.execute(createUserDto);
-    const token = await this.loginUseCase.execute(user.email, createUserDto.password);
+    const { token } = await this.loginUseCase.execute(user.email, createUserDto.password);
     return {
       access_token: token,
       user: {

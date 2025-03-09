@@ -1,6 +1,6 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { IEventRepository } from '@domain/interfaces/IEventRepository';
-import { EventUpdateDto } from '@application/dto/event-update.dto';
+import { EventUpdateDto } from '@application/dto/events/event-update.dto';
 import { Event } from '@domain/entities/event.entity';
 import { RedisService } from '@infrastructure/services/redis.service';
 

@@ -1,7 +1,7 @@
 import { Injectable, ConflictException, Inject } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { IUserRepository } from '@domain/interfaces/IUserRepository';
-import { CreateUserDto } from '@application/dto/createuser-dto';
+import { CreateUserDto } from '@application/dto/users/user-create.dto';
 import { User } from '@domain/entities/user.entity';
 
 @Injectable()
