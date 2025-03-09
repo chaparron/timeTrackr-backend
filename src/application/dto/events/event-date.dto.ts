@@ -8,10 +8,10 @@ export class HourRangeDto {
   @IsNotEmpty()
   start: string;
 
-  @ApiProperty({ example: '12:00', description: 'End hour in format HH:mm', required: false })
+  @ApiProperty({ example: '12:00', description: 'End hour in format HH:mm' })
   @IsString()
   @IsNotEmpty()
-  end?: string;
+  end: string;
 }
 
 export class EventDateDto {

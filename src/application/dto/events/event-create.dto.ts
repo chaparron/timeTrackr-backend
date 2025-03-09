@@ -18,12 +18,11 @@ export class EventCreateDto {
   @IsString({ each: true })
   colleagues?: string[];
 
-  @ApiProperty({ description: 'List of event dates (optional)', type: [EventDateDto], required: false })
+  @ApiProperty({ description: 'List of event dates', type: [EventDateDto] })
   @IsArray()
   @ValidateNested({ each: true })
-  @IsOptional()
   @Type(() => EventDateDto)
-  dates?: EventDateDto[];
+  dates: EventDateDto[];
 
   @ApiProperty({ description: 'Description of the event (optional)', example: 'Discuss project updates', required: false })
   @IsOptional()
