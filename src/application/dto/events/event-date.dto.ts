@@ -1,14 +1,28 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, ValidateNested, IsArray } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class EventDateDto {
-  @ApiProperty({ description: 'Start date of the event (ISO format)', example: '2023-12-25T10:00:00Z' })
+export class HourRangeDto {
+  @ApiProperty({ example: '10:00', description: 'Start hour in format HH:mm' })
   @IsString()
   @IsNotEmpty()
   start: string;
 
-  @ApiProperty({ description: 'End date of the event (ISO format, optional)', example: '2023-12-25T12:00:00Z', required: false })
+  @ApiProperty({ example: '12:00', description: 'End hour in format HH:mm', required: false })
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   end?: string;
+}
+
+export class EventDateDto {
+  @ApiProperty({ example: '2023-12-25', description: 'Day in format YYYY-MM-DD' })
+  @IsString()
+  @IsNotEmpty()
+  day: string;
+
+  @ApiProperty({ type: [HourRangeDto], description: 'hours intervals' })
+  @ValidateNested({ each: true })
+  @Type(() => HourRangeDto)
+  @IsArray()
+  hours: HourRangeDto[];
 }

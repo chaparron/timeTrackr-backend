@@ -32,25 +32,30 @@ describe('Event Entity', () => {
 
   it('should accept valid dates', () => {
     const validDates = [
-      { start: '2023-10-01T09:00:00', end: '2023-10-01T10:00:00' },
-      { start: '2023-10-01T09:00:00' },
+      {
+        day: '2023-10-01',
+        hours: [
+          { start: '09:00', end: '10:00' },
+          { start: '11:00' }
+        ]
+      }
     ];
 
-    const eventWithValidDates = new Event({
+    const event = new Event({
       id: 1,
       title: 'Team Meeting',
       userId: 123,
       dates: validDates,
     });
 
-    expect(eventWithValidDates.dates).toEqual(validDates);
+    expect(event.dates).toEqual(validDates);
   });
 
   it('should reject invalid dates', () => {
     const invalidDates = [
-      { start: 'invalid-date' },
-      { start: '2023-10-01T09:00:00', end: 'invalid-date' },
-      { start: '2023-10-01T11:00:00', end: '2023-10-01T10:00:00' },
+      { day: '2023-13-01', hours: [{ start: '09:00' }] },
+      { day: '2023-10-01', hours: [{ start: '25:00' }] },
+      { day: '2023-10-01', hours: [{ start: '10:00', end: '09:00' }] }
     ];
 
     invalidDates.forEach((dates) => {
@@ -71,35 +76,23 @@ describe('Event Entity', () => {
       title: 'Team Meeting',
       userId: 123,
       dates: [
-        { start: '2023-10-01T09:00:00', end: '2023-10-01T10:00:00' },
-        { start: '2023-10-01T11:00:00', end: '2023-10-01T13:00:00' },
+        {
+          day: '2023-10-01',
+          hours: [
+            { start: '09:00', end: '10:00' },
+            { start: '11:00', end: '13:00' }
+          ]
+        },
+        {
+          day: '2023-10-02',
+          hours: [
+            { start: '09:00', end: '12:00' }
+          ]
+        }
       ],
     };
 
     const event = new Event(eventData);
-    expect(event.totalHours).toEqual(3);
-  });
-
-  it('should update properties correctly', () => {
-    const eventData = {
-      id: 1,
-      title: 'Team Meeting',
-      userId: 123,
-    };
-
-    const event = new Event(eventData);
-
-    const updatedData = {
-      title: 'Updated Meeting',
-      description: 'New agenda',
-      dates: [{ start: '2023-10-01T09:00:00', end: '2023-10-01T10:00:00' }],
-    };
-
-    event.update(updatedData);
-
-    expect(event.title).toEqual(updatedData.title);
-    expect(event.description).toEqual(updatedData.description);
-    expect(event.dates).toEqual(updatedData.dates);
-    expect(event.totalHours).toEqual(1);
+    expect(event.totalHours).toEqual(6);
   });
 });

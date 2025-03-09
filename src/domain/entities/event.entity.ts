@@ -18,7 +18,7 @@ export class Event {
   colleagues?: string[];
 
   @Column('jsonb')
-  dates?: { start: string; end?: string }[];
+  dates?: { day: string; hours: { start: string; end?: string }[] }[];
 
   @Column('text', { nullable: true })
   description?: string;
@@ -39,20 +39,27 @@ export class Event {
   validateDates(): void {
     if (!this.dates || this.dates.length === 0) return;
 
-    for (const date of this.dates) {
-      const start = new Date(date.start).getTime();
-      if (isNaN(start)) {
-        throw new Error(`Invalid start date format, ${date.start}, should be YYYY-MM-DDThh:mm:ss`);
+    for (const dayEntry of this.dates) {
+      const dayDate = new Date(dayEntry.day);
+      if (isNaN(dayDate.getTime())) {
+        throw new Error(`Invalid day format: ${dayEntry.day}, must be YYYY-MM-DD`);
       }
 
-      if (date.end) {
-        const end = new Date(date.end).getTime();
-        if (isNaN(end)) {
-          throw new Error(`Invalid end date format, ${date.end}, should be YYYY-MM-DDThh:mm:ss`);
+      for (const hourEntry of dayEntry.hours) {
+        const startDateTime = new Date(`${dayEntry.day}T${hourEntry.start}`);
+        if (isNaN(startDateTime.getTime())) {
+          throw new Error(`Invalid start time format: ${hourEntry.start} for day ${dayEntry.day}`);
         }
 
-        if (start > end) {
-          throw new Error('Start date must be before end date');
+        if (hourEntry.end) {
+          const endDateTime = new Date(`${dayEntry.day}T${hourEntry.end}`);
+          if (isNaN(endDateTime.getTime())) {
+            throw new Error(`Invalid end time format: ${hourEntry.end} for day ${dayEntry.day}`);
+          }
+
+          if (startDateTime > endDateTime) {
+            throw new Error(`Start time ${hourEntry.start} must be before end time ${hourEntry.end} on day ${dayEntry.day}`);
+          }
         }
       }
     }
@@ -66,11 +73,15 @@ export class Event {
     }
 
     let total = 0;
-    for (const date of this.dates) {
-      const start = new Date(date.start).getTime();
-      if (!date.end) continue;
-      const end = new Date(date.end).getTime();
-      total += (end - start) / (1000 * 60 * 60);
+    for (const dayEntry of this.dates) {
+      for (const hourEntry of dayEntry.hours) {
+        const start = new Date(`${dayEntry.day}T${hourEntry.start}`).getTime();
+        const end = hourEntry.end ? new Date(`${dayEntry.day}T${hourEntry.end}`).getTime() : 0;
+        
+        if (end > 0) {
+          total += (end - start) / (1000 * 60 * 60);
+        }
+      }
     }
     this.totalHours = total;
     return total;
