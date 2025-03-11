@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CreateEventUseCase } from '@application/use-cases/events/CreateEvent';
 import { DeleteEventUseCase } from '@application/use-cases/events/DeleteEvent';
 import { GetEventUseCase } from '@application/use-cases/events/GetEvent';
@@ -19,7 +18,7 @@ import { RedisModule } from 'redis.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.dev',
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -30,7 +29,7 @@ import { RedisModule } from 'redis.module';
       database: process.env.POSTGRES_DB,
       entities: [Event, User],
       entitySkipConstructor: true,
-      synchronize: process.env.NODE_ENV === 'development',
+      synchronize: true,
     }),
     AuthModule,
     InfrastructureModule,
@@ -38,7 +37,6 @@ import { RedisModule } from 'redis.module';
   ],
   controllers: [AppController, EventController],
   providers: [
-    AppService,
     CreateEventUseCase,
     DeleteEventUseCase,
     GetEventUseCase,
