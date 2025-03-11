@@ -1,0 +1,24 @@
+FROM node:22-bullseye-slim as builder
+WORKDIR /app
+
+COPY package*.json ./
+COPY .env.prod .
+RUN npm ci --omit=dev
+COPY . .
+RUN npm run build
+
+FROM node:22-bullseye-slim AS production 
+WORKDIR /app
+
+USER root
+RUN apt-get update && apt-get install -y curl
+USER node
+
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/.env.prod .  
+
+ENV NODE_ENV=production
+
+CMD ["node", "dist/main.js"]
