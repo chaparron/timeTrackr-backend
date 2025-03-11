@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { ValidationFilter } from '@infrastructure/filters/validation.filter';
+import { HttpExceptionFilter } from '@infrastructure/filters/httpException.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -53,12 +53,10 @@ function setupValidation(app: any) {
       forbidNonWhitelisted: true,
     })
   );
-  app.useGlobalFilters(new ValidationFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
 }
 
-function setupCors(app: any) {
-  const isProduction = process.env.NODE_ENV === 'production';
-  
+function setupCors(app: any) {  
   app.enableCors({
     origin: process.env.CORS_ALLOWED_ORIGINS ?? true,
     credentials: true,
