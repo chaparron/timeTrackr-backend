@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 type Duration = { hours: number; minutes: number };
 
-@Entity()
+@Entity({ name: 'events' })
 export class Event {
   @PrimaryGeneratedColumn()
   id: number;
